@@ -1,4 +1,7 @@
 package com.tondi.matrix;
+import com.tondi.matrix.bridge.PrintingStrategy;
+
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Vector;
 
@@ -6,13 +9,23 @@ public class Matrix implements IMatrix {
     private final int M;             // number of rows
     private final int N;             // number of columns
     private final Vector<Double>[][] data;   // M-by-N array
+    private PrintingStrategy printingStrategy;
 
-    // create M-by-N matrix of 0's
     public Matrix(int M, int N) {
         this.M = M;
         this.N = N;
         data = new Vector[M][N];
+        this.randomize();
+    }
 
+    public Matrix(int M, int N, PrintingStrategy printingStrategy) {
+        this.M = M;
+        this.N = N;
+        data = new Vector[M][N];
+        this.randomize();
+
+        // Bridge pattern - separate printing capabilities from their implementation
+        this.printingStrategy = printingStrategy;
     }
 
     @Override
@@ -27,9 +40,18 @@ public class Matrix implements IMatrix {
 
     public void print() {
         for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++)
-                System.out.print(data[i][j]);
-            System.out.println();
+            for (int j = 0; j < N; j++) {
+                if (printingStrategy == null) {
+                    System.out.print(data[i][j]);
+                } else {
+                    printingStrategy.print(Arrays.toString(data[i][j].toArray()));
+                }
+            }
+            if (printingStrategy == null) {
+                System.out.println();
+            } else {
+                printingStrategy.println(null);
+            }
         }
     }
 
@@ -47,14 +69,23 @@ public class Matrix implements IMatrix {
 //    private Matrix(Matrix A) { this(A.data); }
 //
     // create and return a random M-by-N matrix with values between 0 and 1
-    public void randomize(int M, int N) {
+    public void randomize() {
         for (int i = 0; i < M; i++)
             for (int j = 0; j < N; j++) {
-                Vector<Double> x = new Vector();
-                x.add(new Random().nextDouble());
-                this.data[i][j] = x;
+                this.data[i][j] = generateVector();
             }
     }
+
+    public Vector generateVector() {
+        Vector<Double> x = new Vector();
+        x.add(new Random().nextDouble());
+        return x;
+    }
+
+    public Vector[][] getData() {
+        return this.data;
+    }
+
 //
 //    // create and return the N-by-N identity matrix
 //    public static Matrix identity(int N) {

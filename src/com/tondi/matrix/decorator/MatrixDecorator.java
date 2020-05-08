@@ -1,4 +1,6 @@
-package com.tondi.matrix;
+package com.tondi.matrix.decorator;
+
+import com.tondi.matrix.IMatrix;
 
 abstract class MatrixDecorator implements IMatrix {
     protected IMatrix matrixToBeDecorated;
