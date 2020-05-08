@@ -1,15 +1,18 @@
 package com.tondi.matrix;
+import java.util.Random;
+import java.util.Vector;
 
 public class Matrix implements IMatrix {
     private final int M;             // number of rows
     private final int N;             // number of columns
-    private final double[][] data;   // M-by-N array
+    private final Vector<Double>[][] data;   // M-by-N array
 
     // create M-by-N matrix of 0's
     public Matrix(int M, int N) {
         this.M = M;
         this.N = N;
-        data = new double[M][N];
+        data = new Vector[M][N];
+
     }
 
     @Override
@@ -20,6 +23,14 @@ public class Matrix implements IMatrix {
     @Override
     public int getHeight() {
         return M;
+    }
+
+    public void print() {
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++)
+                System.out.print(data[i][j]);
+            System.out.println();
+        }
     }
 
     //    // create matrix based on 2d array
@@ -35,14 +46,15 @@ public class Matrix implements IMatrix {
 //    // copy constructor
 //    private Matrix(Matrix A) { this(A.data); }
 //
-//    // create and return a random M-by-N matrix with values between 0 and 1
-//    public static Matrix random(int M, int N) {
-//        Matrix A = new Matrix(M, N);
-//        for (int i = 0; i < M; i++)
-//            for (int j = 0; j < N; j++)
-//                A.data[i][j] = Math.random();
-//        return A;
-//    }
+    // create and return a random M-by-N matrix with values between 0 and 1
+    public void randomize(int M, int N) {
+        for (int i = 0; i < M; i++)
+            for (int j = 0; j < N; j++) {
+                Vector<Double> x = new Vector();
+                x.add(new Random().nextDouble());
+                this.data[i][j] = x;
+            }
+    }
 //
 //    // create and return the N-by-N identity matrix
 //    public static Matrix identity(int N) {
@@ -164,13 +176,7 @@ public class Matrix implements IMatrix {
 //    }
 //
 //    // print matrix to standard output
-    public void print() {
-        for (int i = 0; i < M; i++) {
-            for (int j = 0; j < N; j++)
-                System.out.printf("%9.4f ", data[i][j]);
-            System.out.println();
-        }
-    }
+
 //
 //
 //
