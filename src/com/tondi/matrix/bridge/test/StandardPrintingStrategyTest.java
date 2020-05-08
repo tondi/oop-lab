@@ -23,7 +23,6 @@ class BridgeTest {
         System.setErr(new PrintStream(errContent));
     }
 
-
     // test
     @Test
     public void testPrinting() {
