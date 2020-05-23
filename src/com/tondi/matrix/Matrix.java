@@ -1,5 +1,6 @@
 package com.tondi.matrix;
 import com.tondi.matrix.bridge.PrintingStrategy;
+import com.tondi.matrix.visitor.IMatrixVisitor;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -70,5 +71,10 @@ public class Matrix implements IMatrix {
 
     public Vector[][] getData() {
         return this.data;
+    }
+
+    @Override
+    public void accept(IMatrixVisitor visitor) {
+        visitor.visit(this);
     }
 }

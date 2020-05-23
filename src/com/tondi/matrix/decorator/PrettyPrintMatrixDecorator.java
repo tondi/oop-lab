@@ -1,6 +1,7 @@
 package com.tondi.matrix.decorator;
 
 import com.tondi.matrix.IMatrix;
+import com.tondi.matrix.visitor.IMatrixVisitor;
 
 public class PrettyPrintMatrixDecorator extends MatrixDecorator {
     public PrettyPrintMatrixDecorator(IMatrix matrixToBeDecorated) {
