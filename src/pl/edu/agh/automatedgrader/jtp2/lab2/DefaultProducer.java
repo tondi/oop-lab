@@ -7,69 +7,46 @@ import java.util.List;
 import java.util.Queue;
 
 public class DefaultProducer implements Producer {
-	private Queue<Integer> queue;
-	private int howMany;
-	private int sizeLimit;
-	private List<Integer> produced = new ArrayList<>();
-	private Object consumerLock;
-	private Object producerLock;
+	private final Queue<Integer> queue;
+	private final int howMany;
+	private final int sizeLimit;
+	private final List<Integer> produced = new ArrayList<>();
 
-
-	public static int id = 0;
-	public int _id;
+	private static int instancesCount = 0;
+	private final int id;
 	
-	DefaultProducer(Queue<Integer> queue, int howMany, int sizeLimit, Object consumerLock, Object producerLock) {
+	DefaultProducer(Queue<Integer> queue, int howMany, int sizeLimit) {
 		this.queue = queue;
 		this.howMany = howMany;
 		this.sizeLimit = sizeLimit;
-		this.consumerLock = consumerLock;
-		this.producerLock = producerLock;
 
-		this._id = DefaultProducer.id++;
+		this.id = DefaultProducer.instancesCount++;
 	}
 	
 	@Override
 	public void run() {
 		while(produced.size() != howMany) {
 			synchronized(queue) {
-				System.out.println("Producer: " + this._id);
+				System.out.println("Producer: " + this.id);
 				if (queue.size() < sizeLimit) {
 					queue.add(12);
 					produced.add(12);
 					System.out.println(" produced value");
 					System.out.println(" produces left: " + (howMany - produced.size()));
 					System.out.println(queue);
-//					notifyProduction();
 					queue.notifyAll();
 				} else {
 					System.out.println(" queue is full. waiting");
-//					waitForConsumption();
 					try {
 						queue.wait();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
+						Thread.currentThread().interrupt();
 					}
 				}
 			}
 		}
 
-	}
-
-	private void notifyProduction() {
-		synchronized (producerLock) {
-			producerLock.notifyAll();
-		}
-	}
-
-
-	private void waitForConsumption() {
-		synchronized (consumerLock) {
-			try {
-				consumerLock.wait();
-			} catch (InterruptedException ex) {
-				Thread.currentThread().interrupt();
-			}
-		}
 	}
 
 	@Override

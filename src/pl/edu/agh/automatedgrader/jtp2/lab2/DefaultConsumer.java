@@ -8,30 +8,24 @@ import java.util.Queue;
 
 public class DefaultConsumer implements Consumer {
 	private final Queue<Integer> queue;
-	private List<Integer> consumed = new LinkedList<>();
-	private int howMany;
-	private int sizeLimit;
-	private Object consumerLock;
-	private Object producerLock;
+	private final List<Integer> consumed = new LinkedList<>();
+	private final int howMany;
 
-	public static int id = 0;
-	public int _id;
+	private static int instancesCount = 0;
+	private final int id;
 	
-	DefaultConsumer(Queue<Integer> queue, int howMany, int sizeLimit, Object consumerLock, Object producerLock) {
+	DefaultConsumer(Queue<Integer> queue, int howMany) {
 		this.queue = queue;
 		this.howMany = howMany;
-		this.sizeLimit = sizeLimit;
-		this.consumerLock = consumerLock;
-		this.producerLock = producerLock;
 
-		this._id = DefaultConsumer.id++;
+		this.id = DefaultConsumer.instancesCount++;
 	}
 	
     @Override
 	public void run() {
 		while (consumed.size() != howMany) {
 			synchronized(queue) {
-				System.out.println("Consumer: " + this._id);
+				System.out.println("Consumer: " + this.id);
 				if(queue.isEmpty()) {
 					System.out.println(" queue is empty, waiting");
 					System.out.println(" consumes left: " + (howMany - consumed.size()));
@@ -40,6 +34,7 @@ public class DefaultConsumer implements Consumer {
 						queue.wait();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
+						Thread.currentThread().interrupt();
 					}
 				} else {
 					Integer value = queue.poll();
@@ -47,25 +42,8 @@ public class DefaultConsumer implements Consumer {
 					System.out.println(" consumed value " + value);
 					System.out.println(" consumes left: " + (howMany - consumed.size()));
 					System.out.println(queue);
-//					notifyConsumption();
 					queue.notifyAll();
 				}
-			}
-		}
-	}
-
-	private void notifyConsumption() {
-		synchronized (consumerLock) {
-			consumerLock.notifyAll();
-		}
-	}
-
-	private void waitForProduction() {
-		synchronized (producerLock) {
-			try {
-				producerLock.wait();
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
 			}
 		}
 	}
