@@ -2,62 +2,94 @@ package pl.edu.agh.automatedgrader.jtp2.lab2;
 
 import pl.edu.agh.automatedgrader.jtp2.lab2.interfaces.Producer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
 public class DefaultProducer implements Producer {
 	private Queue<Integer> queue;
-	int maxSize;
-	
+	private int howMany;
+	private int sizeLimit;
+	private List<Integer> produced = new ArrayList<>();
+	private Object consumerLock;
+	private Object producerLock;
+
+
 	public static int id = 0;
 	public int _id;
 	
-	DefaultProducer(Queue<Integer> queue, int maxSize) {
+	DefaultProducer(Queue<Integer> queue, int howMany, int sizeLimit, Object consumerLock, Object producerLock) {
 		this.queue = queue;
-		this.maxSize = maxSize;
+		this.howMany = howMany;
+		this.sizeLimit = sizeLimit;
+		this.consumerLock = consumerLock;
+		this.producerLock = producerLock;
+
 		this._id = DefaultProducer.id++;
 	}
 	
 	@Override
 	public void run() {
-		System.out.println("producer run");
-
-		while(true) {	 	
+		while(produced.size() != howMany) {
 			synchronized(queue) {
-				while(queue.size() == maxSize) {
+				System.out.println("Producer: " + this._id);
+				if (queue.size() < sizeLimit) {
+					queue.add(12);
+					produced.add(12);
+					System.out.println(" produced value");
+					System.out.println(" produces left: " + (howMany - produced.size()));
+					System.out.println(queue);
+//					notifyProduction();
+					queue.notifyAll();
+				} else {
+					System.out.println(" queue is full. waiting");
+//					waitForConsumption();
 					try {
 						queue.wait();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				
-				queue.add(12);
-				System.out.println("From prod " + this._id + " " + queue.size());
-				queue.notifyAll();
+			}
+		}
+
+	}
+
+	private void notifyProduction() {
+		synchronized (producerLock) {
+			producerLock.notifyAll();
+		}
+	}
+
+
+	private void waitForConsumption() {
+		synchronized (consumerLock) {
+			try {
+				consumerLock.wait();
+			} catch (InterruptedException ex) {
+				Thread.currentThread().interrupt();
 			}
 		}
 	}
 
 	@Override
 	public List<Integer> getProducedList() {
-		return null;
+		return produced;
 	}
 
 	@Override
 	public int getHowMany() {
-		return 0;
+		return howMany;
 	}
 
 	@Override
 	public int getSizeLimit() {
-		return 0;
+		return sizeLimit;
 	}
 
 	@Override
 	public Queue<Integer> getQueue() {
-		return null;
+		return queue;
 	}
 
 	@Override

@@ -15,10 +15,10 @@ public class DefaultMain implements Main {
     public static void main(String[] args) throws InterruptedException {
         DefaultMain main = new DefaultMain();
 
-        int howMany = 3;
+        int howMany = 2;
         int sizeLimit = 3;
-        int consumerCount = 5;
-        int producerCount = 3;
+        int consumerCount = 10;
+        int producerCount = 10;
 
         main.produceConsume(howMany, sizeLimit, consumerCount, producerCount);
     }
@@ -27,11 +27,11 @@ public class DefaultMain implements Main {
     public void produceConsume(int howMany, int sizeLimit, int consumerCount, int producerCount) throws InterruptedException {
 
         for (int i = 0; i < consumerCount; i++) {
-            consumers.add(new DefaultConsumer(queue, sizeLimit));
+            consumers.add(new DefaultConsumer(queue, howMany, sizeLimit, consumers, producers));
         }
 
         for (int i = 0; i < producerCount; i++) {
-            producers.add(new DefaultProducer(queue, sizeLimit));
+            producers.add(new DefaultProducer(queue, howMany, sizeLimit, consumers, producers));
         }
 
         List<Thread> threads = new ArrayList<>();
