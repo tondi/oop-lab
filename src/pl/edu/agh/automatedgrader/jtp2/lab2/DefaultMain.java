@@ -1,46 +1,67 @@
 package pl.edu.agh.automatedgrader.jtp2.lab2;
 
-import java.util.LinkedList;
+import pl.edu.agh.automatedgrader.jtp2.lab2.interfaces.Consumer;
+import pl.edu.agh.automatedgrader.jtp2.lab2.interfaces.Main;
+import pl.edu.agh.automatedgrader.jtp2.lab2.interfaces.Producer;
 
-public class DefaultMain {
-	static LinkedList<Integer> list = new LinkedList<>();
-	static int maxSize = 1;
-	
-	public static void main(String[] args) {
-		Producer p1 = new Producer(list, maxSize);
-		Consumer c1 = new Consumer(list, maxSize);
-		
-		Producer p2 = new Producer(list, maxSize);
-		Consumer c2 = new Consumer(list, maxSize);
-		
-		Producer p3 = new Producer(list, maxSize);
-		Consumer c3 = new Consumer(list, maxSize);
-		
-		p1.start();
-		c1.start();
-		
-		p2.start();
-		c2.start();
-		
-		p3.start();
-		c3.start();
-		
-		
-//		for(int i = 0; i < 10; i++) {
-//		}
-	
-//		try {
-//			p.join();
-//			c.join();
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-//		while(true) {
-//			p.produce(list);
-//			c.consume(list);
-//		}
-		
-	}
+import java.util.*;
+
+public class DefaultMain implements Main {
+
+    private List<Consumer> consumers = new ArrayList<>();
+    private List<Producer> producers = new ArrayList<>();
+    private Queue<Integer> queue = new LinkedList<>();
+
+    public static void main(String[] args) throws InterruptedException {
+        DefaultMain main = new DefaultMain();
+
+        int howMany = 3;
+        int sizeLimit = 3;
+        int consumerCount = 5;
+        int producerCount = 3;
+
+        main.produceConsume(howMany, sizeLimit, consumerCount, producerCount);
+    }
+
+    @Override
+    public void produceConsume(int howMany, int sizeLimit, int consumerCount, int producerCount) throws InterruptedException {
+
+        for (int i = 0; i < consumerCount; i++) {
+            consumers.add(new DefaultConsumer(queue, sizeLimit));
+        }
+
+        for (int i = 0; i < producerCount; i++) {
+            producers.add(new DefaultProducer(queue, sizeLimit));
+        }
+
+        List<Thread> threads = new ArrayList<>();
+
+        consumers.forEach(consumer -> threads.add(new Thread(consumer)));
+        producers.forEach(producer -> threads.add(new Thread(producer)));
+
+        threads.forEach(Thread::start);
+
+        try {
+            for (Thread thread : threads) {
+                thread.join();
+            }
+        } catch(InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    @Override
+    public List<Consumer> getConsumers() {
+        return this.consumers;
+    }
+
+    @Override
+    public List<Producer> getProducers() {
+        return this.producers;
+    }
+
+    @Override
+    public Queue<Integer> getQueue() {
+        return this.queue;
+    }
 }
