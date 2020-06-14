@@ -28,5 +28,5 @@ abstract class DefaultMatrixDecorator implements IMatrix {
     @Override
     public void accept(IMatrixVisitor visitor) {
         visitor.visit(this);
-    };
+    }
 }

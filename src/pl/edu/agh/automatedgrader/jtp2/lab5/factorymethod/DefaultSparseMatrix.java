@@ -4,8 +4,8 @@ import pl.edu.agh.automatedgrader.jtp2.lab5.DefaultMatrix;
 
 import java.util.Vector;
 
-public class SparseMatrix extends DefaultMatrix {
-    public SparseMatrix(int M, int N) {
+public class DefaultSparseMatrix extends DefaultMatrix {
+    public DefaultSparseMatrix(int M, int N) {
         super(M, N);
     }
 

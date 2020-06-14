@@ -5,8 +5,8 @@ import pl.edu.agh.automatedgrader.jtp2.lab5.DefaultMatrix;
 import java.util.Random;
 import java.util.Vector;
 
-public class DenseMatrix extends DefaultMatrix {
-    public DenseMatrix(int M, int N) {
+public class DefaultDenseMatrix extends DefaultMatrix {
+    public DefaultDenseMatrix(int M, int N) {
         super(M, N);
     }
 

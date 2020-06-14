@@ -1,7 +1,7 @@
 package pl.edu.agh.automatedgrader.jtp2.lab5.bridge;
 
 public class LogPrintingStrategy implements PrintingStrategy {
-    private StringBuilder log = new StringBuilder();
+    private final StringBuilder log = new StringBuilder();
 
     @Override
     public void print(String str) {
@@ -10,7 +10,7 @@ public class LogPrintingStrategy implements PrintingStrategy {
 
     @Override
     public void println(String str) {
-        log.append("\n" + str + "\n");
+        log.append("\n").append(str).append("\n");
     }
 
     public String getLog() {
