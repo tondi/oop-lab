@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DefaultWaiter implements Waiter {
-    private Set<Fork> usedForks = new HashSet<>();
-    private Set<DefaultPhilosopher> waitingPhilosophers = new HashSet<>();
+    private final Set<Fork> usedForks = new HashSet<>();
+    private final Set<DefaultPhilosopher> waitingPhilosophers = new HashSet<>();
 
     @Override
     public Set<Fork> getUsedForks() {

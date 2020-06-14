@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultMain implements Main {
-    private List<DefaultPhilosopher> philosophers = new ArrayList<>();
-    private List<DefaultFork> forks = new ArrayList<>();
-    DefaultWaiter waiter;
+    private final List<DefaultPhilosopher> philosophers = new ArrayList<>();
+    private final List<DefaultFork> forks = new ArrayList<>();
+    DefaultWaiter waiter = new DefaultWaiter();;
 
     public static void main(String[] args) {
         DefaultMain df = new DefaultMain();
@@ -22,24 +22,24 @@ public class DefaultMain implements Main {
             forks.add(new DefaultFork());
         }
 
-        waiter = new DefaultWaiter();
-
         for (int i = 0; i < numberOfPhilosophers; i++) {
-            Fork leftFork = forks.get(i);
-            Fork rightFork = forks.get((i + 1) % numberOfPhilosophers);
-
-            System.out.println("forks: " + leftFork.getId() + " " + rightFork.getId() + " for philosopher " + i);
-
-            if(i == numberOfPhilosophers - 1)
-                philosophers.add(new DefaultPhilosopher(leftFork, rightFork, howMany, maxTimeForEating, maxTimeForThinking, waiter));
-            else
-                philosophers.add(new DefaultPhilosopher(rightFork, leftFork, howMany, maxTimeForEating, maxTimeForThinking, waiter));
-
-            Thread t = new Thread(philosophers.get(i), "Philosopher " + (i + 1));
-            t.start();
+            philosophers.add(new DefaultPhilosopher(forks.get((i + 1) % numberOfPhilosophers), forks.get(i), howMany, maxTimeForEating, maxTimeForThinking, waiter));
         }
 
-        System.out.println();
+        List<Thread> threads = new ArrayList<>(numberOfPhilosophers);
+        for (int i = 0; i < numberOfPhilosophers; i++) {
+            threads.add(new Thread(philosophers.get(i), "Philosopher " + (i + 1)));
+        }
+
+        threads.forEach(Thread::start);
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     @Override
