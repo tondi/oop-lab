@@ -1,6 +1,8 @@
 package pl.edu.agh.automatedgrader.jtp2.lab4.impl;
 
-public class Vector {
+import java.io.Serializable;
+
+public class Vector implements Serializable {
     private int x;
     private int y;
 

@@ -5,10 +5,9 @@ import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
 public class DefaultScalarProductTask extends RecursiveTask<List<Integer>> {
-    private static int SEQUENTIAL_THRESHOLD = 5;
+    private static final int SEQUENTIAL_THRESHOLD = 5;
 
     private List<Vector> vectors;
-
 
     DefaultScalarProductTask(List<Vector> vectors) {
         this.vectors = vectors;
