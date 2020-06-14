@@ -29,8 +29,13 @@ class MainTest
 		Assertions.assertEquals(main.getPhilosophers().size(), numberOfPhilosophers);
 		Assertions.assertEquals(main.getForks().size(), numberOfPhilosophers);
 		Set<Integer> leftIds = new HashSet<>();
+
+		int i = 0;
 		for (Philosopher philosopher : main.getPhilosophers())
 		{
+			System.out.println("philosopher: " + i + " left: " + philosopher.getLeftFork().getId());
+			System.out.println(leftIds);
+			System.out.println(Integer.valueOf(philosopher.getLeftFork().getId()));
 			Assertions.assertTrue(leftIds.add(Integer.valueOf(philosopher.getLeftFork().getId())));
 		}
 	}
