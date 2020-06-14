@@ -18,6 +18,8 @@ public class DefaultScalarProductTask extends RecursiveTask<List<Integer>> {
         if (vectors.size() <= SEQUENTIAL_THRESHOLD) {
             return multiplyVectorPairs();
         } else {
+            System.out.println("Steal work");
+
             int middle = vectors.size() / 2;
             List<Vector> newList = vectors.subList(middle, vectors.size());
             vectors = vectors.subList(0, middle);
@@ -43,4 +45,6 @@ public class DefaultScalarProductTask extends RecursiveTask<List<Integer>> {
         }
         return result;
     }
+
+
 }
